@@ -6,7 +6,10 @@ logic [31:0]Result;
 alu dut (
     .A(A), .B(B), .alu_op(alu_op), .Result(Result)
 );
+
 initial begin 
+    $dumpfile("alu.vcd");
+    $dumpvars(0, alu_test);
     A = 2;
     B = 2;
     alu_op = 4'b0000;
