@@ -1,5 +1,7 @@
 
-module cpu_top (
+module cpu_top #(
+    parameter PROGRAM_FILE = "program.hex"
+) (
     input logic clk,
     input logic reset_n
 );
@@ -54,7 +56,9 @@ module cpu_top (
     );
 
     // Instruction Memory
-    instruction_memory imem_inst (
+    instruction_memory #(
+        .PROGRAM_FILE(PROGRAM_FILE)
+    ) imem_inst (
         .pc(pc),
         .instruction(instruction)
     );
@@ -138,8 +142,10 @@ module cpu_top (
             case (funct3)
                 3'b000: branch_taken = (rs1_data == rs2_data);
                 3'b001: branch_taken = (rs1_data != rs2_data);
-                3'b100: branch_taken = ($signed(rs1_data) < $signed(rs2_data));
-                3'b101: branch_taken = ($signed(rs1_data) >= $signed(rs2_data));
+                3'b100: branch_taken =
+                    ($signed(rs1_data) < $signed(rs2_data));
+                3'b101: branch_taken =
+                    ($signed(rs1_data) >= $signed(rs2_data));
                 3'b110: branch_taken = (rs1_data < rs2_data);
                 3'b111: branch_taken = (rs1_data >= rs2_data);
                 default: branch_taken = 1'b0;
@@ -151,7 +157,7 @@ module cpu_top (
     assign pc_plus4 = pc + 32'd4;
     assign branch_target = pc + immediate;
 
-    // JAL and JALR Targets
+    // Jump Target
     assign jump_target =
         (opcode == 7'b1100111)
         ? ((rs1_data + immediate) & 32'hFFFFFFFE)
