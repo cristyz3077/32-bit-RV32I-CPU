@@ -8,7 +8,7 @@ alu dut (
 );
 
 initial begin 
-    $dumpfile("alu.vcd");
+    $dumpfile("build/waves/alu.vcd");
     $dumpvars(0, alu_test);
     A = 2;
     B = 2;

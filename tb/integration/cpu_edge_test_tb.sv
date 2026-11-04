@@ -8,7 +8,7 @@ module cpu_edge_test_tb;
     integer tests_passed;
 
     cpu_top #(
-        .PROGRAM_FILE("cpu_edge_test.hex")
+        .PROGRAM_FILE("programs/cpu_edge_test.hex")
     ) dut (
         .clk(clk),
         .reset_n(reset_n)

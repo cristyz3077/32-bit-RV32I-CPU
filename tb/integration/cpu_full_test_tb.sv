@@ -1,14 +1,15 @@
 
 `timescale 1ns/1ps
 
-module cpu_branch_false_tb;
+module cpu_full_test_tb;
 
     logic clk;
     logic reset_n;
+
     integer tests_passed;
 
     cpu_top #(
-        .PROGRAM_FILE("cpu_branch_false.hex")
+        .PROGRAM_FILE("programs/cpu_full_test.hex")
     ) dut (
         .clk(clk),
         .reset_n(reset_n)
@@ -39,16 +40,29 @@ module cpu_branch_false_tb;
         #2;
         reset_n = 1;
 
-        repeat (12) @(posedge clk);
+        // Execute first six instructions.
+        repeat (6) @(posedge clk);
         #1;
 
         check_reg(1, 5);
         check_reg(2, 10);
-        check_reg(3, 1);
-        check_reg(4, 2);
-        check_reg(5, 3);
-        check_reg(6, 4);
-        check_reg(7, 5);
+        check_reg(3, 15);
+        check_reg(4, 15);
+
+        // BEQ should skip the instruction at PC = 24.
+        if (dut.pc === 32'd28) begin
+            $display("PASS: BEQ skipped instruction");
+            tests_passed = tests_passed + 1;
+        end else begin
+            $display("FAIL: Expected PC = 28, got %0d", dut.pc);
+        end
+
+        // Execute instruction at PC = 28.
+        @(posedge clk);
+        #1;
+
+        check_reg(5, 0);
+        check_reg(6, 7);
 
         $display("Tests passed: %0d/7", tests_passed);
         $finish;

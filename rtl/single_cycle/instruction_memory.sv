@@ -1,6 +1,6 @@
 
 module instruction_memory #(
-    parameter PROGRAM_FILE = "program.hex"
+    parameter PROGRAM_FILE = "programs/program.hex"
 ) (
     input logic [31:0] pc,
     output logic [31:0] instruction

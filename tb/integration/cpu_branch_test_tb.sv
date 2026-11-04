@@ -1,14 +1,14 @@
 
 `timescale 1ns/1ps
 
-module cpu_upper_test_tb;
+module cpu_branch_test_tb;
 
     logic clk;
     logic reset_n;
     integer tests_passed;
 
     cpu_top #(
-        .PROGRAM_FILE("cpu_upper_test.hex")
+        .PROGRAM_FILE("programs/cpu_branch_test.hex")
     ) dut (
         .clk(clk),
         .reset_n(reset_n)
@@ -21,11 +21,12 @@ module cpu_upper_test_tb;
         input [31:0] expected;
         begin
             if (dut.rf_inst.regs[reg_num] === expected) begin
-                $display("PASS: x%0d = %h", reg_num, expected);
+                $display("PASS: x%0d = %0d", reg_num, expected);
                 tests_passed = tests_passed + 1;
             end else begin
-                $display("FAIL: x%0d expected %h, got %h",
-                    reg_num, expected, dut.rf_inst.regs[reg_num]);
+                $display("FAIL: x%0d expected %0d, got %0d",
+                         reg_num, expected,
+                         dut.rf_inst.regs[reg_num]);
             end
         end
     endtask
@@ -38,15 +39,20 @@ module cpu_upper_test_tb;
         #2;
         reset_n = 1;
 
-        repeat (4) @(posedge clk);
+        repeat (11) @(posedge clk);
         #1;
 
-        check_reg(1, 32'h12345000);
-        check_reg(2, 32'h00002004);
-        check_reg(3, 32'h00000008);
-        check_reg(4, 32'hABCDE000);
+        check_reg(1, 5);
+        check_reg(2, 10);
+        check_reg(3, 0);
+        check_reg(4, 0);
+        check_reg(5, 0);
+        check_reg(6, 0);
+        check_reg(7, 0);
+        check_reg(8, 0);
+        check_reg(9, 7);
 
-        $display("Tests passed: %0d/4", tests_passed);
+        $display("Tests passed: %0d/9", tests_passed);
         $finish;
     end
 

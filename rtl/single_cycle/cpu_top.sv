@@ -1,6 +1,6 @@
 
 module cpu_top #(
-    parameter PROGRAM_FILE = "program.hex"
+    parameter PROGRAM_FILE = "programs/program.hex"
 ) (
     input logic clk,
     input logic reset_n

@@ -1,14 +1,14 @@
 
 `timescale 1ns/1ps
 
-module cpu_branch_test_tb;
+module cpu_branch_false_tb;
 
     logic clk;
     logic reset_n;
     integer tests_passed;
 
     cpu_top #(
-        .PROGRAM_FILE("cpu_branch_test.hex")
+        .PROGRAM_FILE("programs/cpu_branch_false.hex")
     ) dut (
         .clk(clk),
         .reset_n(reset_n)
@@ -39,20 +39,18 @@ module cpu_branch_test_tb;
         #2;
         reset_n = 1;
 
-        repeat (11) @(posedge clk);
+        repeat (12) @(posedge clk);
         #1;
 
         check_reg(1, 5);
         check_reg(2, 10);
-        check_reg(3, 0);
-        check_reg(4, 0);
-        check_reg(5, 0);
-        check_reg(6, 0);
-        check_reg(7, 0);
-        check_reg(8, 0);
-        check_reg(9, 7);
+        check_reg(3, 1);
+        check_reg(4, 2);
+        check_reg(5, 3);
+        check_reg(6, 4);
+        check_reg(7, 5);
 
-        $display("Tests passed: %0d/9", tests_passed);
+        $display("Tests passed: %0d/7", tests_passed);
         $finish;
     end
 
