@@ -15,6 +15,8 @@ module ex_mem_reg_tb;
     logic [31:0] immediate_in, immediate_out;
     logic [4:0] rd_addr_in, rd_addr_out;
 
+    logic [2:0] funct3_in = 3'b101, funct3_out;
+
     // Control signal inputs and outputs
     logic reg_write_in, reg_write_out;
     logic mem_write_in, mem_write_out;
@@ -28,6 +30,8 @@ module ex_mem_reg_tb;
         .clk(clk),
         .reset_n(reset_n),
         .flush(flush),
+        .funct3_in(funct3_in),
+        .funct3_out(funct3_out),
 
         .alu_result_in(alu_result_in),
         .rs2_data_in(rs2_data_in),
@@ -57,10 +61,11 @@ module ex_mem_reg_tb;
 
     // Check whether outputs match expected values
     task check_outputs;
-        input logic expect_zero;
-        input logic [31:0] expected_alu;
+        input expect_zero;
+        input [31:0] expected_alu;
         begin
             if (
+                funct3_out === (expect_zero ? 3'd0 : funct3_in) &&
                 alu_result_out === expected_alu &&
                 rs2_data_out === (expect_zero ? 32'd0 : rs2_data_in) &&
                 pc_plus4_out === (expect_zero ? 32'd0 : pc_plus4_in) &&

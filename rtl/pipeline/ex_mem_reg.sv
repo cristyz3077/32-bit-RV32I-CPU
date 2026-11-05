@@ -10,6 +10,7 @@ module ex_mem_reg (
     input logic [31:0] pc_plus4_in,
     input logic [31:0] immediate_in,
     input logic [4:0] rd_addr_in,
+    input logic [2:0] funct3_in,
 
     // Control signals
     input logic reg_write_in,
@@ -23,6 +24,7 @@ module ex_mem_reg (
     output logic [31:0] pc_plus4_out,
     output logic [31:0] immediate_out,
     output logic [4:0] rd_addr_out,
+    output logic [2:0] funct3_out,
 
     // Control signal outputs
     output logic reg_write_out,
@@ -38,6 +40,7 @@ module ex_mem_reg (
             pc_plus4_out <= 0;
             immediate_out <= 0;
             rd_addr_out <= 0;
+            funct3_out <= 0;
 
             reg_write_out <= 0;
             mem_write_out <= 0;
@@ -50,6 +53,7 @@ module ex_mem_reg (
             pc_plus4_out <= 0;
             immediate_out <= 0;
             rd_addr_out <= 0;
+            funct3_out <= 0;
 
             reg_write_out <= 0;
             mem_write_out <= 0;
@@ -62,6 +66,7 @@ module ex_mem_reg (
             pc_plus4_out <= pc_plus4_in;
             immediate_out <= immediate_in;
             rd_addr_out <= rd_addr_in;
+            funct3_out <= funct3_in;
 
             reg_write_out <= reg_write_in;
             mem_write_out <= mem_write_in;
