@@ -3,7 +3,11 @@ module cpu_top #(
     parameter PROGRAM_FILE = "programs/program.hex"
 ) (
     input logic clk,
-    input logic reset_n
+    input logic reset_n,
+    output logic [31:0] debug_pc,
+    output logic debug_reg_write,
+    output logic [4:0] debug_rd_addr,
+    output logic [31:0] debug_writeback_data
 );
 
     logic [31:0] pc;
@@ -207,5 +211,11 @@ module cpu_top #(
                 writeback_data = alu_result;
         endcase
     end
+
+// Observe the PC and register writes during synthesis
+assign debug_pc = pc;
+assign debug_reg_write = reset_n && rf_write_enable && (rd_addr != 5'd0);
+assign debug_rd_addr = rd_addr;
+assign debug_writeback_data = writeback_data;
 
 endmodule
