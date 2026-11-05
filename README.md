@@ -40,3 +40,18 @@ Memory retains the existing implementation: use data addresses within the
 traps for invalid addresses, misalignment, and illegal instructions are not
 implemented. Short hex files produce harmless `$readmemh` size warnings;
 the regression fills unused instruction slots with a terminal loop.
+
+The pipeline exposes `retire_valid` and `retire_pc`, sampled at the rising
+clock edge when the instruction completes WB. Valid bits track instructions
+through stalls and flushes, including stores, branches, and writes to x0.
+The existing PC-plus-four path supplies the retirement PC.
+
+The integration testbench measures cycles from the first active clock edge
+through the last program instruction's retirement. It counts retired
+instructions and checks their PC sequence against the single-cycle CPU.
+The first retirement at `WORDS * 4` marks the terminal loop and is excluded
+from both the instruction count and measured completion cycle. CPI includes
+pipeline fill time, stalls, and branch penalties. Programs must terminate at
+that marker within the testbench's 200-cycle limit. The simulated clock period
+is a testbench setting; it does not establish a synthesized maximum frequency
+or hardware speedup.

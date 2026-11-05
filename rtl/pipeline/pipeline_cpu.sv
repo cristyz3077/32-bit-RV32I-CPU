@@ -1,7 +1,9 @@
 
 module pipeline_cpu #(parameter PROGRAM_FILE = "programs/program.hex") (
     input logic clk,
-    input logic reset_n
+    input logic reset_n,
+    output logic retire_valid,
+    output logic [31:0] retire_pc
 );
 
     // IF stage signals
@@ -362,6 +364,45 @@ mem_wb_reg mem_wb (
     .jump_in(ex_mem_jump),
     .jump_out(mem_wb_jump)
 );
+
+// Track real instructions through stalls and flushes
+// A valid instruction can retire even when it does not write a register
+logic if_id_valid;
+logic id_ex_valid;
+logic ex_mem_valid;
+logic mem_wb_valid;
+
+always_ff @(posedge clk or negedge reset_n) begin
+    if (!reset_n) begin
+        if_id_valid <= 0;
+        id_ex_valid <= 0;
+        ex_mem_valid <= 0;
+        mem_wb_valid <= 0;
+    end
+    else begin
+        if (redirect) begin
+            if_id_valid <= 0;
+        end
+        else if (!stall) begin
+            if_id_valid <= 1;
+        end
+
+        if (redirect || stall) begin
+            id_ex_valid <= 0;
+        end
+        else begin
+            id_ex_valid <= if_id_valid;
+        end
+
+        ex_mem_valid <= id_ex_valid;
+        mem_wb_valid <= ex_mem_valid;
+    end
+end
+
+// Sample retirement at the rising edge when WB writes the register file
+// PC + 4 already travels through all pipeline registers
+assign retire_valid = reset_n && mem_wb_valid;
+assign retire_pc = mem_wb_pc_plus4 - 32'd4;
 
 // Writeback
 assign wb_rd_addr = mem_wb_rd_addr;
