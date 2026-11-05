@@ -15,7 +15,8 @@ module ex_mem_reg_tb;
     logic [31:0] immediate_in, immediate_out;
     logic [4:0] rd_addr_in, rd_addr_out;
 
-    logic [2:0] funct3_in = 3'b101, funct3_out;
+    logic [2:0] funct3_in = 3'b101;
+    logic [2:0] funct3_out;
 
     // Control signal inputs and outputs
     logic reg_write_in, reg_write_out;
